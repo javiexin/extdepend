@@ -1,0 +1,26 @@
+{
+    "name": "javiexin/exttestchild3",
+    "type": "phpbb-extension",
+    "description": "Dependent extension for testing - 3",
+    "homepage": "",
+    "version": "1.0.0-dev",
+    "time": "2016-12-14",
+    "license": "GPL-2.0",
+    "authors": [
+        {
+            "name": "javiexin",
+            "email": "javiexin@gmail.com",
+            "homepage": "",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3"
+    },
+    "extra": {
+        "display-name": "Test extension - Child 3",
+        "soft-require": {
+            "phpbb/phpbb": ">=3.1.10,<3.2.0@dev"
+        }
+    }
+}
