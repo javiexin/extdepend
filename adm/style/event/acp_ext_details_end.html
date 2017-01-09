@@ -1,0 +1,51 @@
+	<!-- IF .depends || .dependants -->
+	<fieldset>
+		<legend>{L_EXTENSION_DEPENDENCIES_INFORMATION}</legend>
+		<table class="table1">
+			<col class="row1" ><col class="row1" ><col class="row1" ><col class="row2" >
+		<thead>
+			<tr>
+				<th>{L_DISPLAY_NAME}</th>
+				<th style="text-align: center; width: 20%;">{L_EXTENSION_REQUIRED_VERSION}</th>
+				<th style="text-align: center; width: 15%;">{L_EXTENSION_AVAILABLE_VERSION}</th>
+				<th style="text-align: center; width: 15%;">{L_EXTENSION_STATUS}</th>
+			</tr>
+		</thead>
+		<tbody>
+			<!-- IF .depends -->
+			<tr>
+				<td class="row3" colspan="4"><strong title="{L_EXTENSION_DEPENDS_ON_EXPLAIN}">{L_EXTENSION_DEPENDS_ON}</strong></td>
+			</tr>
+			<!-- BEGIN depends -->
+			<tr class="ext_depend row-highlight">
+				<td><!-- IF depends.S_AVAILABLE --><a href="{depends.U_DETAILS}"><!-- ENDIF --><strong title="{depends.NAME}">{depends.DISPLAY_NAME}</strong><!-- IF depends.S_AVAILABLE --></a><!-- ENDIF --></td>
+				<td style="text-align: center;">{depends.REQ_VERSION}</td>
+				<td style="text-align: center;"><strong>{depends.VERSION}</strong></td>
+				<td style="text-align: center;">
+					<!-- IF depends.S_ENABLED --><strong style="color: #228822;">{L_EXTENSION_ENABLED}</strong>
+					<!-- ELSEIF depends.S_DISABLED -->{L_EXTENSION_DISABLED}
+					<!-- ELSEIF depends.S_AVAILABLE -->{L_EXTENSION_AVAILABLE}
+					<!-- ELSE --><strong style="color: #BC2A4D;">{L_EXTENSION_UNAVAILABLE}
+					<!-- ENDIF -->
+				</td>
+			</tr>
+			<!-- END depends -->
+			<!-- ENDIF -->
+
+			<!-- IF .dependants -->
+			<tr>
+				<td class="row3" colspan="4"><strong title="{L_EXTENSION_DEPENDANTS_EXPLAIN}">{L_EXTENSION_DEPENDANTS}</strong></td>
+			</tr>
+			<!-- BEGIN dependants -->
+			<tr class="ext_ext_depend row-highlight">
+				<td><!-- IF dependants.S_AVAILABLE --><a href="{dependants.U_DETAILS}"><!-- ENDIF --><strong title="{dependants.NAME}">{dependants.DISPLAY_NAME}</strong><!-- IF dependants.S_AVAILABLE --></a><!-- ENDIF --></td>
+				<td style="text-align: center;">{dependants.REQ_VERSION}</td>
+				<td style="text-align: center;"><strong>{dependants.VERSION}</strong></td>
+				<td style="text-align: center;"><!-- IF dependants.S_ENABLED -->{L_EXTENSION_ENABLED}<!-- ENDIF --></td>
+			</tr>
+			<!-- END dependants -->
+			<!-- ENDIF -->
+		</tbody>
+		</table>
+	</fieldset>
+	<!-- ENDIF -->

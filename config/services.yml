@@ -1,0 +1,18 @@
+services:
+    javiexin.extdependencies.extdep.manager:
+        class: javiexin\extdependencies\extension\dependency_manager
+        arguments:
+            - '@ext.manager'
+            - '@config_text'
+            - '@template'
+
+    javiexin.extdependencies.listener:
+        class: javiexin\extdependencies\event\listener
+        arguments:
+            - '@ext.manager'
+            - '@javiexin.extdependencies.extdep.manager'
+            - '@template'
+            - '@request'
+            - '@user'
+        tags:
+            - { name: event.listener }
