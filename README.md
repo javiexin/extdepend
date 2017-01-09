@@ -94,4 +94,4 @@ At the moment, the version information is NOT used at all.  This will go into a 
 
 ## License
 
-[GPLv2](license.txt)
+[GPLv3](license.txt)
