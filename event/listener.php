@@ -194,9 +194,11 @@ class listener implements EventSubscriberInterface
 					if ($invalid)
 					{
 						$this->template->alter_block_array('enabled', array(
-							'META_DISPLAY_NAME'		=> '<strong style="color: #BC2A4D;">' . $this->dependency_manager->display_name($name) . '</strong>: ' .
-													$this->user->lang('EXTENSION_CIRCULAR_DEPENDENCY_DISABLE')  . '<br/><strong style="color: #BC2A4D;">' .
-													$this->adm_link($u_action . '&amp;action=disable_pre&amp;ext_name=' . urlencode($name), 'EXTENSION_DISABLE', 'EXTENSION_DISABLE_EXPLAIN') . '</strong>',
+								'META_DISPLAY_NAME'		=> '<strong style="color: #BC2A4D;">' . $this->dependency_manager->display_name($name) . '</strong>: ' .
+														$this->user->lang('EXTENSION_CIRCULAR_DEPENDENCY_DISABLE')  .
+														(($index === false)
+															? ('<br/><strong style="color: #BC2A4D;">' . $this->adm_link($u_action . '&amp;action=disable_pre&amp;ext_name=' . urlencode($name), 'EXTENSION_DISABLE', 'EXTENSION_DISABLE_EXPLAIN') . '</strong>')
+															: ''),
 							), array('NAME' => $name), 'change');
 						if ($index !== false)
 						{
@@ -208,14 +210,16 @@ class listener implements EventSubscriberInterface
 					else if ($revalidate)
 					{
 						$this->template->alter_block_array('enabled', array(
-							'META_DISPLAY_NAME'		=> '<strong style="color: #BC2A4D;">' . $this->dependency_manager->display_name($name) . '</strong>: ' .
-													$this->user->lang('EXTENSION_REVALIDATE_NEEDED')  . '<br/><strong style="color: #BC2A4D;">' .
-													$this->adm_link($u_action . '&amp;action=disable_pre&amp;revalidate=' . urlencode($name) . '&amp;ext_name=' . urlencode($name), 'EXTENSION_REVALIDATE', 'EXTENSION_REVALIDATE_ACTION_EXPLAIN') . '</strong>',
+								'META_DISPLAY_NAME'		=> '<strong style="color: #BC2A4D;">' . $this->dependency_manager->display_name($name) . '</strong>: ' .
+														$this->user->lang('EXTENSION_REVALIDATE_NEEDED')  .
+														(($index === false)
+															? ('<br/><strong style="color: #BC2A4D;">' . $this->adm_link($u_action . '&amp;action=disable_pre&amp;revalidate=' . urlencode($name) . '&amp;ext_name=' . urlencode($name), 'EXTENSION_REVALIDATE', 'EXTENSION_REVALIDATE_ACTION_EXPLAIN') . '</strong>')
+															: ''),
 							), array('NAME' => $name), 'change');
 						if ($index !== false)
 						{
 							$this->template->alter_block_array("enabled[$index].actions", array(
-									'L_ACTION'			=> $this->user->lang('EXTENSION_REVALIDATE'),
+									'L_ACTION'			=> '<strong style="color: #BC2A4D;">' . $this->user->lang('EXTENSION_REVALIDATE') . '</strong>',
 									'L_ACTION_EXPLAIN'	=> $this->user->lang('EXTENSION_REVALIDATE_ACTION_EXPLAIN'),
 									'U_ACTION'			=> $u_action . '&amp;action=disable_pre&amp;revalidate=' . urlencode($name) . '&amp;ext_name=' . urlencode($name),
 								), true);
