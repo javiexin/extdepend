@@ -115,7 +115,7 @@ class listener implements EventSubscriberInterface
 						$dependencies_not_available = $this->dependency_manager->unavailable_dependencies($ext_name);
 						if (!empty($dependencies_not_available))
 						{
-							trigger_error($this->user->lang['EXTENSION_DEPENDENCIES_NOT_AVAILABLE'] . $this->to_html_string($dependencies_not_available) . adm_back_link($u_action), E_USER_WARNING);
+							trigger_error($this->user->lang('EXTENSION_DEPENDENCIES_NOT_AVAILABLE') . $this->to_html_string($dependencies_not_available) . adm_back_link($u_action), E_USER_WARNING);
 						}
 						$dependencies_available = $this->dependency_manager->available_dependencies($ext_name);
 						if (!empty($dependencies_available))
@@ -125,7 +125,7 @@ class listener implements EventSubscriberInterface
 							$dependencies_not_confirmed = array_diff_key($dependencies_available, $dependencies_to_enable);
 							if (!empty($dependencies_not_confirmed))
 							{
-								trigger_error($this->user->lang['EXTENSION_DEPENDENCIES_NOT_CONFIRMED'] . $this->to_html_string($dependencies_not_confirmed) . adm_back_link($u_action), E_USER_WARNING);
+								trigger_error($this->user->lang('EXTENSION_DEPENDENCIES_NOT_CONFIRMED') . $this->to_html_string($dependencies_not_confirmed) . adm_back_link($u_action), E_USER_WARNING);
 							}
 							$dependencies_to_enable = array_keys($dependencies_to_enable);
 							$ext_name = array_pop($dependencies_to_enable);
@@ -154,7 +154,7 @@ class listener implements EventSubscriberInterface
 							$dependencies_not_confirmed = array_diff_key($enabled_dependants, $dependencies_to_disable);
 							if (!empty($dependencies_not_confirmed))
 							{
-								trigger_error($this->user->lang['EXTENSION_DEPENDANTS_NOT_CONFIRMED'] . $this->to_html_string($dependencies_not_confirmed) . adm_back_link($u_action), E_USER_WARNING);
+								trigger_error($this->user->lang('EXTENSION_DEPENDANTS_NOT_CONFIRMED') . $this->to_html_string($dependencies_not_confirmed) . adm_back_link($u_action), E_USER_WARNING);
 							}
 							$dependencies_to_disable = array_keys($dependencies_to_disable);
 							$ext_name = array_pop($dependencies_to_disable);
@@ -190,34 +190,45 @@ class listener implements EventSubscriberInterface
 				if ($this->ext_manager->is_enabled($name))
 				{
 					$revalidate = !$this->dependency_manager->check_dependencies($name, true);
-					if (($revalidate || $invalid) && (($index = $this->template->find_key_index('enabled', array('NAME' => $name))) !== false))
+					$index = method_exists($this->template, 'find_key_index') ? $this->template->find_key_index('enabled', array('NAME' => $name)) : false;
+					if ($invalid)
 					{
-						if ($invalid)
-						{
-							$this->template->alter_block_array('enabled', array(
-								'META_DISPLAY_NAME'		=> $this->user->lang('EXTENSION_CIRCULAR_DEPENDENCY_DISABLE', $this->dependency_manager->display_name($name)),
+						$this->template->alter_block_array('enabled', array(
+							'META_DISPLAY_NAME'		=> '<strong style="color: #BC2A4D;">' . $this->dependency_manager->display_name($name) . '</strong>: ' .
+													$this->user->lang('EXTENSION_CIRCULAR_DEPENDENCY_DISABLE')  . '<br/><strong style="color: #BC2A4D;">' .
+													$this->adm_link($u_action . '&amp;action=disable_pre&amp;ext_name=' . urlencode($name), 'EXTENSION_DISABLE', 'EXTENSION_DISABLE_EXPLAIN') . '</strong>',
 							), array('NAME' => $name), 'change');
+						if ($index !== false)
+						{
 							$this->template->alter_block_array("enabled[$index].actions", array(
 								'L_ACTION'				=> '<strong style="color: #BC2A4D;">' . $this->user->lang('EXTENSION_DISABLE') . '</strong>',
 							), array('L_ACTION' => $this->user->lang('EXTENSION_DISABLE')), 'change');
 						}
-						else if ($revalidate)
+					}
+					else if ($revalidate)
+					{
+						$this->template->alter_block_array('enabled', array(
+							'META_DISPLAY_NAME'		=> '<strong style="color: #BC2A4D;">' . $this->dependency_manager->display_name($name) . '</strong>: ' .
+													$this->user->lang('EXTENSION_REVALIDATE_NEEDED')  . '<br/><strong style="color: #BC2A4D;">' .
+													$this->adm_link($u_action . '&amp;action=disable_pre&amp;revalidate=' . urlencode($name) . '&amp;ext_name=' . urlencode($name), 'EXTENSION_REVALIDATE', 'EXTENSION_REVALIDATE_ACTION_EXPLAIN') . '</strong>',
+							), array('NAME' => $name), 'change');
+						if ($index !== false)
 						{
 							$this->template->alter_block_array("enabled[$index].actions", array(
 									'L_ACTION'			=> $this->user->lang('EXTENSION_REVALIDATE'),
 									'L_ACTION_EXPLAIN'	=> $this->user->lang('EXTENSION_REVALIDATE_ACTION_EXPLAIN'),
 									'U_ACTION'			=> $u_action . '&amp;action=disable_pre&amp;revalidate=' . urlencode($name) . '&amp;ext_name=' . urlencode($name),
-							), true);
+								), true);
 						}
 					}
 				}
 				else if ($invalid)
 				{
-					if (($index = $this->template->find_key_index('disabled', array('NAME' => $name))) !== false)
-					{
-						$this->template->alter_block_array('disabled', array(
-							'META_DISPLAY_NAME'		=> $this->user->lang('EXTENSION_CIRCULAR_DEPENDENCY_ENABLE', $this->dependency_manager->display_name($name)),
+					$this->template->alter_block_array('disabled', array(
+						'META_DISPLAY_NAME'		=> '<strong style="color: #BC2A4D;">' . $this->dependency_manager->display_name($name) . '</strong>: ' . $this->user->lang('EXTENSION_CIRCULAR_DEPENDENCY_ENABLE'),
 						), array('NAME' => $name), 'change');
+					if (($index = method_exists($this->template, 'find_key_index') ? $this->template->find_key_index('disabled', array('NAME' => $name)) : false) !== false)
+					{
 						$this->template->alter_block_array("disabled[$index].actions", array(), array('L_ACTION' => $this->user->lang('EXTENSION_ENABLE')), 'delete');
 					}
 				}
@@ -237,7 +248,7 @@ class listener implements EventSubscriberInterface
 						$ext_name = $this->dependency_manager->revalidate_new(explode(',',$revalidate));
 						if (!$ext_name)
 						{
-							trigger_error($this->user->lang['EXTENSION_CIRCULAR_DEPENDENCY_ENABLE'] . adm_back_link($u_action), E_USER_WARNING);
+							trigger_error($this->dependency_manager->display_name($ext_name) . ': ' . $this->user->lang('EXTENSION_CIRCULAR_DEPENDENCY_ENABLE') . adm_back_link($u_action), E_USER_WARNING);
 						}
 						$revalidate = $ext_name_save;
 						$this->template->assign_var('S_REVALIDATE', true);
@@ -248,7 +259,7 @@ class listener implements EventSubscriberInterface
 					{
 						if (!$this->dependency_manager->register($ext_name))
 						{
-							trigger_error($this->user->lang['EXTENSION_CIRCULAR_DEPENDENCY_ENABLE'] . adm_back_link($u_action), E_USER_WARNING);
+							trigger_error($this->dependency_manager->display_name($ext_name) . ': ' . $this->user->lang('EXTENSION_CIRCULAR_DEPENDENCY_ENABLE') . adm_back_link($u_action), E_USER_WARNING);
 						}
 					}
 					if (!$this->dependency_manager->check_dependencies($ext_name))
@@ -256,7 +267,7 @@ class listener implements EventSubscriberInterface
 						$dependencies_not_available = $this->dependency_manager->unavailable_dependencies($ext_name);
 						if (!empty($dependencies_not_available))
 						{
-							trigger_error($this->user->lang['EXTENSION_DEPENDENCIES_NOT_AVAILABLE'] . $this->to_html_string($dependencies_not_available) . adm_back_link($u_action), E_USER_WARNING);
+							trigger_error($this->user->lang('EXTENSION_DEPENDENCIES_NOT_AVAILABLE') . $this->to_html_string($dependencies_not_available) . adm_back_link($u_action), E_USER_WARNING);
 						}
 						$dependencies_available = $this->dependency_manager->available_dependencies($ext_name);
 						if (!empty($dependencies_available))
@@ -407,6 +418,7 @@ class listener implements EventSubscriberInterface
 	 * The returned array is suitable to be used by assign_block_vars_array
 	 *
 	 * @param string	$ext_dep	Comma separated list of dependencies
+	 * @param string	$u_action	Base action to perform
 	 * @return array				Array of arrays of template data, one entry per extension in the dependencies list
 	 */
 	protected function ext_template_data($ext_dep, $u_action)
@@ -451,5 +463,18 @@ class listener implements EventSubscriberInterface
 			}
 		}
 		return $ext_template_data;
+	}
+
+	/**
+	 * Generate a clickable HTML string to access a link with a message
+	 *
+	 * @param string	$u_action	The URL to link to
+	 * @param string	$msg		A string (or language constant) with the message to show to user
+	 * @param string	$explain	A string (or language constant) with the explanation of the action, shown as a tooltip (optional)
+	 * @return array				Array of (up to two) arrays with extension details for dependency related extensions
+	 */
+	protected function adm_link($u_action, $msg, $explain = '')
+	{
+		return '&raquo; <a ' . (($explain) ? ('title="' . $this->user->lang($explain) . '" ') : '') . 'href="' . $u_action . '">' . $this->user->lang($msg) . '</a>';
 	}
 }
