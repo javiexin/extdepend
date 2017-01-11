@@ -28,6 +28,11 @@ class ext extends \phpbb\extension\base
 
 	public function is_enableable()
 	{
-		return $this->container->get('ext.manager')->is_enabled('javiexin/extdependencies');
+		if (!$this->container->get('ext.manager')->is_enabled('javiexin/extdependencies'))
+		{
+			$this->container->get('user')->add_lang_ext('javiexin/exttestchild5', 'extdependencies');
+			trigger_error($this->container->get('user')->lang['DEPENCY_MANAGER_REQUIRED_NOTICE'], E_USER_WARNING);
+		}
+		return true;
 	}
 }

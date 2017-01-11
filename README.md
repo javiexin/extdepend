@@ -56,7 +56,7 @@ a list of depending extensions, are both included (if there are any such depende
 
 ### Instructions for extension authors for subordinate extensions
 
-To "declare" a dependency, the subordinate extension must define a method in the ext.php file,
+To "declare" a dependency, the subordinate extension must define a method in the `ext.php` file,
 much like what it is done for migration dependencies:
 
 	public function depends_on()
@@ -72,7 +72,7 @@ extension will stop to work, or create significant forum problems and malfunctio
 to have SOFT dependencies, where the subordinate extension would fail over to a less-optimal behaviour,
 or even, stop working without causing other problems.
 
-If you really want to make it safe, then you should also declare, in ext.php:
+If you really want to make it safe, then you should also declare, in `ext.php`:
 
 	public function is_enableable()
 	{
@@ -81,8 +81,23 @@ If you really want to make it safe, then you should also declare, in ext.php:
 
 This will make sure that your extension will not be enabled unless the Dependency Manager is at work, in
 which case the lifecycle of dependencies will be automaticall maintained.  Note that you do NOT need to
-explicitly add a dependency on the Extension Dependency Manager itself, as if you declare a "depends_on"
+explicitly add a dependency on the Extension Dependency Manager itself, as if you declare a `depends_on`
 function, this dependency will be included automatically.
+
+If you want to add verbosity to the above, you could use the following method instead (also in `ext.php`):
+
+	public function is_enableable()
+	{
+		if (!$this->container->get('ext.manager')->is_enabled('javiexin/extdependencies'))
+		{
+			$this->container->get('user')->add_lang_ext('vendor/extension', 'extdependencies');
+			trigger_error($this->container->get('user')->lang['DEPENCY_MANAGER_REQUIRED_NOTICE'], E_USER_WARNING);
+		}
+		return true;
+	}
+
+For this last bit to work, you should copy the file `javiexin/extdependencies/language/en/extdependencies.php`
+to your `vendor/extension/language/en` folder.
 
 ### Instructions for extension authors for base extensions
 
