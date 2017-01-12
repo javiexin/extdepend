@@ -225,15 +225,41 @@ class listener implements EventSubscriberInterface
 								), true);
 						}
 					}
-				}
-				else if ($invalid)
-				{
-					$this->template->alter_block_array('disabled', array(
-						'META_DISPLAY_NAME'		=> '<strong style="color: #BC2A4D;">' . $this->dependency_manager->display_name($name) . '</strong>: ' . $this->user->lang('EXTENSION_CIRCULAR_DEPENDENCY_ENABLE'),
-						), array('NAME' => $name), 'change');
-					if (($index = method_exists($this->template, 'find_key_index') ? $this->template->find_key_index('disabled', array('NAME' => $name)) : false) !== false)
+					if ($index !== false)
 					{
-						$this->template->alter_block_array("disabled[$index].actions", array(), array('L_ACTION' => $this->user->lang('EXTENSION_ENABLE')), 'delete');
+						$template_data = $this->ext_details_template_data($name, $u_action);
+						foreach($template_data as $block => $dep_array)
+						{
+							foreach($dep_array as $dep)
+							{
+								$this->template->alter_block_array("enabled[$index].$block", $dep);
+							}
+						}
+					}
+				}
+				else
+				{
+					$index = method_exists($this->template, 'find_key_index') ? $this->template->find_key_index('disabled', array('NAME' => $name)) : false;
+					if ($invalid)
+					{
+						$this->template->alter_block_array('disabled', array(
+								'META_DISPLAY_NAME'		=> '<strong style="color: #BC2A4D;">' . $this->dependency_manager->display_name($name) . '</strong>: ' . $this->user->lang('EXTENSION_CIRCULAR_DEPENDENCY_ENABLE'),
+							), array('NAME' => $name), 'change');
+						if ($index !== false)
+						{
+							$this->template->alter_block_array("disabled[$index].actions", array(), array('L_ACTION' => $this->user->lang('EXTENSION_ENABLE')), 'delete');
+						}
+					}
+					if ($index !== false)
+					{
+						$template_data = $this->ext_details_template_data($name, $u_action);
+						foreach($template_data as $block => $dep_array)
+						{
+							foreach($dep_array as $dep)
+							{
+								$this->template->alter_block_array("disabled[$index].$block", $dep);
+							}
+						}
 					}
 				}
 			}
