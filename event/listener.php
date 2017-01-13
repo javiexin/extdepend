@@ -239,6 +239,7 @@ class listener implements EventSubscriberInterface
 				}
 				else
 				{
+					$needed = !$this->dependency_manager->check_dependants($name, true);
 					$index = method_exists($this->template, 'find_key_index') ? $this->template->find_key_index('disabled', array('NAME' => $name)) : false;
 					if ($invalid)
 					{
@@ -248,6 +249,22 @@ class listener implements EventSubscriberInterface
 						if ($index !== false)
 						{
 							$this->template->alter_block_array("disabled[$index].actions", array(), array('L_ACTION' => $this->user->lang('EXTENSION_ENABLE')), 'delete');
+						}
+					}
+					else if ($needed)
+					{
+						$this->template->alter_block_array('disabled', array(
+							'META_DISPLAY_NAME'		=> '<strong style="color: #228822;">' . $this->dependency_manager->display_name($name) . '</strong>: ' .
+														$this->user->lang('EXTENSION_ENABLE_NEEDED') .
+														(($index === false)
+															? ('<br/><strong style="color: #228822;">' . $this->adm_link($u_action . '&amp;action=enable_pre&amp;ext_name=' . urlencode($name), 'EXTENSION_ENABLE', 'EXTENSION_ENABLE_EXPLAIN') . '</strong>')
+															: ''),
+						), array('NAME' => $name), 'change');
+						if ($index !== false)
+						{
+							$this->template->alter_block_array("disabled[$index].actions", array(
+								'L_ACTION'				=> '<strong style="color: #228822;">' . $this->user->lang('EXTENSION_ENABLE') . '</strong>',
+							), array('L_ACTION' => $this->user->lang('EXTENSION_ENABLE')), 'change');
 						}
 					}
 					if ($index !== false)

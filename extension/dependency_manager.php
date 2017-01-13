@@ -329,12 +329,13 @@ class dependency_manager
 	/**
 	 * Check dependants
 	 *
-	 * @param string	$ext_name 	The name of the extension being checked
+	 * @param string	$ext_name 		The name of the extension being checked
+	 * @param bool		$check_disabled	Force checking of disabled extension, to resynchronize (default false)
 	 * @return boolean 	true if no dependants are enabled, false otherwise
 	 */
-	public function check_dependants($ext_name)
+	public function check_dependants($ext_name, $check_disabled=false)
 	{
-		if ($this->ext_manager->is_disabled($ext_name))
+		if ($this->ext_manager->is_disabled($ext_name) && !$check_disabled)
 		{
 			return true;
 		}

@@ -42,6 +42,7 @@ $lang = array_merge($lang, array(
 	'EXTENSION_CIRCULAR_DEPENDENCY_ENABLE'	=> 'Extension is not valid.<br />Circular dependency detected, the extension cannot be enabled.',
 	'EXTENSION_CIRCULAR_DEPENDENCY_DISABLE'	=> 'Extension is not valid.<br />Circular dependency detected, the extension should be disabled.',
 	'EXTENSION_REVALIDATE_NEEDED'			=> 'Extension may not be valid.<br />Dependencies not met, the extension should be revalidated.',
+	'EXTENSION_ENABLE_NEEDED'				=> 'Extension is required.<br />Dependants are already enabled, the extension should be enabled.',
 	'EXTENSION_ENABLED_DONE'				=> 'DONE',
 	'EXTENSION_DISABLED_DONE'				=> 'DONE',
 
