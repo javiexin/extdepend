@@ -119,7 +119,7 @@ class dependency_manager
 	 */
 	private function update_extension($ext_name)
 	{
-		if ($this->ext_manager->is_enabled($ext_name) && isset($this->dependencies[$ext_name]['display-name']))
+		if (!$this->ext_manager->is_available($ext_name) || ($this->ext_manager->is_enabled($ext_name) && isset($this->dependencies[$ext_name]['display-name'])))
 		{
 			return;
 		}
@@ -184,11 +184,12 @@ class dependency_manager
 	 * Unregister extension
 	 *
 	 * @param string	$ext_name 	The name of the extension being unregistered from the dependencies tree
+	 * $param boolean	$force		Force unregistering enabled extensions (when invalid)
 	 * @return boolean 	Success
 	 */
-	public function unregister($ext_name)
+	public function unregister($ext_name, $force=false)
 	{
-		if ($this->ext_manager->is_enabled($ext_name))
+		if ($this->ext_manager->is_enabled($ext_name) && !$force)
 		{
 			return false;
 		}
@@ -259,7 +260,7 @@ class dependency_manager
 		}
 		foreach ($this->dependencies[$ext_name]['depends_on'] as $ext_depend => $ext_version)
 		{
-			if (!$this->ext_manager->is_enabled($ext_depend))
+			if (!$this->ext_manager->is_enabled($ext_depend) || !$this->ext_manager->is_available($ext_depend))
 			{
 				return false;
 			}
