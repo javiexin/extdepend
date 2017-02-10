@@ -39,6 +39,7 @@ $lang = array_merge($lang, array(
 	'EXTENSION_DEPENDENCIES_NOT_AVAILABLE'	=> 'The selected extension cannot be enabled, the following required dependencies are not available:',
 	'EXTENSION_DEPENDENCIES_NOT_CONFIRMED'	=> 'The selected extension cannot be enabled, some dependency(ies) have been disabled:',
 	'EXTENSION_DEPENDANTS_NOT_CONFIRMED'	=> 'The selected extension cannot be disabled, new extension(s) depend on it:',
+	'EXTENSION_CIRCULAR_DEPENDENCY'			=> 'Circular dependency detected.',
 	'EXTENSION_CIRCULAR_DEPENDENCY_ENABLE'	=> 'Extension is not valid.<br />Circular dependency detected, the extension cannot be enabled.',
 	'EXTENSION_CIRCULAR_DEPENDENCY_DISABLE'	=> 'Extension is not valid.<br />Circular dependency detected, the extension should be disabled.',
 	'EXTENSION_REVALIDATE_NEEDED'			=> 'Extension may not be valid.<br />Dependencies not met, the extension should be revalidated.',

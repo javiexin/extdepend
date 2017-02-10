@@ -290,6 +290,7 @@ class listener implements EventSubscriberInterface
 					}
 				}
 			}
+			unset($ext_available);
 		}
 
 		if (in_array($action, array('enable', 'disable', 'enable_pre', 'disable_pre', 'details')) && $ext_name)
@@ -443,6 +444,7 @@ class listener implements EventSubscriberInterface
 					{
 						$this->template->assign_block_vars_array($block, $dep_array);
 					}
+					$this->template->assign_var('S_EXTENSION_INVALID', $this->dependency_manager->register($ext_name) ? false : true);
 				break;
 			}
 
