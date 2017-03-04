@@ -23,7 +23,7 @@ class listener implements EventSubscriberInterface
 	static public function getSubscribedEvents()
 	{
 		return array(
-			'core.acp_extensions_run_action'		=> 'acp_extensions_run_action',
+			'core.acp_extensions_run_action_before'	=> 'acp_extensions_run_action_before',
 			'core.acp_extensions_run_action_after'	=> 'acp_extensions_run_action_after',
 		);
 	}
@@ -73,7 +73,7 @@ class listener implements EventSubscriberInterface
 	 *
 	 * @param \phpbb\event\data	$event	Event object
 	 */
-	public function acp_extensions_run_action($event)
+	public function acp_extensions_run_action_before($event)
 	{
 		$action = $event['action'];
 		$ext_name = $event['ext_name'];
