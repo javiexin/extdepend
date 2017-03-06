@@ -182,7 +182,7 @@ class listener implements EventSubscriberInterface
 		$u_action = $event['u_action'];
 
 		// If the action is list, it might come as 'list' or as "default", so the only way to make sure is check for the template
-		if ($tpl_name == 'acp_ext_list') // $action == 'list'
+		if ($action == 'list' || strpos($tpl_name, 'acp_ext_list') !== false)
 		{
 			$ext_available = $this->ext_manager->all_available();
 			$ext_invalid = array_diff_key($this->ext_manager->all_configured(), $ext_available);
